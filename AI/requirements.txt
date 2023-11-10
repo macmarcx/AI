@@ -4,3 +4,6 @@ speech-recognition
 setuptools
 python 3.12
 pyaudio
+vosk
+vosk-model-small-pt-0.3
+visual studio 2022

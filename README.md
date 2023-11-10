@@ -6,6 +6,6 @@ Goal:
 - Intelligent
 
 Technology Used:
-- Voice recognition: Google 
+- Voice recognition: Google for online recognition and Vosk for offline recognition
 - Voice synthesis
 - AI

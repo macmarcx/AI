@@ -1,12 +1,49 @@
-# Our main file.
-import speech_recognition as sr
+#!/usr/bin/env python3
 
-# Build a recognition
-r = sr.Recognizer()
+from vosk import Model, KaldiRecognizer
+import os
+import pyaudio
+import pyttsx3
+import json
+import core
+from nlu.classifier import classify
 
-# Open the microphone
-with sr.Microphone() as source:
-    while True:
-        audio = r.listen(source)  # Set microphone as audio source
+# Speech synthesis
+engine = pyttsx3.init()
 
-        print(r.recognize_google(audio, language='pt'))
+voices = engine.getProperty('voices')
+engine.setProperty('voice', voices[-2].id)
+
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+
+# Speech recognition
+
+model = Model('model')
+rec = KaldiRecognizer(model, 16000)
+
+p = pyaudio.PyAudio()
+stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=2048)
+stream.start_stream()
+
+# Speech recognition loop
+while True:
+    data = stream.read(2048)
+    if len(data) == 0:
+        break
+    if rec.AcceptWaveform(data):
+        result = rec.Result()
+        result = json.loads(result)
+
+        if result is not None:
+            text = result['text']
+
+            # Recognize text entity.
+            entity = classify(text)
+
+            if entity == 'time\getTime':
+                speak(core.SystemInfo.get_time())
+
+            print('Text: {}  Entity: {}'.format(text, entity))
