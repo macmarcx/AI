@@ -1,1 +1,6 @@
+Library
 speech-recognition-python 3.9.9
+speech-recognition
+setuptools
+python 3.12
+pyaudio
